@@ -3,148 +3,159 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
-	// make game manager public static so can access this from other scripts
-	public static GameManager gm;
+    // make game manager public static so can access this from other scripts
+    public static GameManager gm;
 
-	// public variables
-	public int score=0;
+    // public variables
+    public int score = 0;
 
-	public bool canBeatLevel = false;
-	public int beatLevelScore=0;
+    public bool canBeatLevel = false;
+    public int beatLevelScore = 0;
 
-	public float startTime=5.0f;
-	
-	public Text mainScoreDisplay;
-	public Text mainTimerDisplay;
+    public float startTime = 5.0f;
 
-	public GameObject gameOverScoreOutline;
+    public Text mainScoreDisplay;
+    public Text mainTimerDisplay;
 
-	public AudioSource musicAudioSource;
+    public GameObject gameOverScoreOutline;
 
-	public bool gameIsOver = false;
+    public AudioSource musicAudioSource;
 
-	public GameObject playAgainButtons;
-	public string playAgainLevelToLoad;
+    public bool gameIsOver = false;
 
-	public GameObject nextLevelButtons;
-	public string nextLevelToLoad;
+    public GameObject playAgainButtons;
+    public string playAgainLevelToLoad;
 
-	private float currentTime;
+    public GameObject nextLevelButtons;
+    public string nextLevelToLoad;
 
-	// setup the game
-	void Start () {
+    private float currentTime;
 
-		// set the current time to the startTime specified
-		currentTime = startTime;
+    // setup the game
+    void Start()
+    {
 
-		// get a reference to the GameManager component for use by other scripts
-		if (gm == null) 
-			gm = this.gameObject.GetComponent<GameManager>();
+        // set the current time to the startTime specified
+        currentTime = startTime;
 
-		// init scoreboard to 0
-		mainScoreDisplay.text = "0";
+        // get a reference to the GameManager component for use by other scripts
+        if (gm == null)
+            gm = this.gameObject.GetComponent<GameManager>();
 
-		// inactivate the gameOverScoreOutline gameObject, if it is set
-		if (gameOverScoreOutline)
-			gameOverScoreOutline.SetActive (false);
+        // init scoreboard to 0
+        mainScoreDisplay.text = "0";
 
-		// inactivate the playAgainButtons gameObject, if it is set
-		if (playAgainButtons)
-			playAgainButtons.SetActive (false);
+        // inactivate the gameOverScoreOutline gameObject, if it is set
+        if (gameOverScoreOutline)
+            gameOverScoreOutline.SetActive(false);
 
-		// inactivate the nextLevelButtons gameObject, if it is set
-		if (nextLevelButtons)
-			nextLevelButtons.SetActive (false);
-	}
+        // inactivate the playAgainButtons gameObject, if it is set
+        if (playAgainButtons)
+            playAgainButtons.SetActive(false);
 
-	// this is the main game event loop
-	void Update () {
-		if (!gameIsOver) {
-			if (canBeatLevel && (score >= beatLevelScore)) {  // check to see if beat game
-				BeatLevel ();
-			} else if (currentTime < 0) { // check to see if timer has run out
-				EndGame ();
-			} else { // game playing state, so update the timer
-				currentTime -= Time.deltaTime;
-				mainTimerDisplay.text = currentTime.ToString ("0.00");				
-			}
-		}
-	}
+        // inactivate the nextLevelButtons gameObject, if it is set
+        if (nextLevelButtons)
+            nextLevelButtons.SetActive(false);
+    }
 
-	void EndGame() {
-		// game is over
-		gameIsOver = true;
+    // this is the main game event loop
+    void Update()
+    {
+        if (!gameIsOver)
+        {
+            if (canBeatLevel && (score >= beatLevelScore))
+            {  // check to see if beat game
+                BeatLevel();
+            }
+            else if (currentTime < 0)
+            { // check to see if timer has run out
+                EndGame();
+            }
+            else
+            { // game playing state, so update the timer
+                currentTime -= Time.deltaTime;
+                mainTimerDisplay.text = currentTime.ToString("0.00");
+            }
+        }
+    }
 
-		// repurpose the timer to display a message to the player
-		mainTimerDisplay.text = "GAME OVER";
+    void EndGame()
+    {
+        // game is over
+        gameIsOver = true;
 
-		// activate the gameOverScoreOutline gameObject, if it is set 
-		if (gameOverScoreOutline)
-			gameOverScoreOutline.SetActive (true);
-	
-		// activate the playAgainButtons gameObject, if it is set 
-		if (playAgainButtons)
-			playAgainButtons.SetActive (true);
+        // repurpose the timer to display a message to the player
+        mainTimerDisplay.text = "GAME OVER";
 
-		// reduce the pitch of the background music, if it is set 
-		if (musicAudioSource)
-			musicAudioSource.pitch = 0.5f; // slow down the music
-	}
-	
-	void BeatLevel() {
-		// game is over
-		gameIsOver = true;
+        // activate the gameOverScoreOutline gameObject, if it is set 
+        if (gameOverScoreOutline)
+            gameOverScoreOutline.SetActive(true);
 
-		// repurpose the timer to display a message to the player
-		mainTimerDisplay.text = "LEVEL COMPLETE";
+        // activate the playAgainButtons gameObject, if it is set 
+        if (playAgainButtons)
+            playAgainButtons.SetActive(true);
 
-		// activate the gameOverScoreOutline gameObject, if it is set 
-		if (gameOverScoreOutline)
-			gameOverScoreOutline.SetActive (true);
+        // reduce the pitch of the background music, if it is set 
+        if (musicAudioSource)
+            musicAudioSource.pitch = 0.5f; // slow down the music
+    }
 
-		// activate the nextLevelButtons gameObject, if it is set 
-		if (nextLevelButtons)
-			nextLevelButtons.SetActive (true);
-		
-		// reduce the pitch of the background music, if it is set 
-		if (musicAudioSource)
-			musicAudioSource.pitch = 0.5f; // slow down the music
-	}
+    void BeatLevel()
+    {
+        // game is over
+        gameIsOver = true;
 
-	// public function that can be called to update the score or time
-	public void targetHit (int scoreAmount, float timeAmount)
-	{
-		// increase the score by the scoreAmount and update the text UI
-		score += scoreAmount;
-		mainScoreDisplay.text = score.ToString ();
-		
-		// increase the time by the timeAmount
-		currentTime += timeAmount;
-		
-		// don't let it go negative
-		if (currentTime < 0)
-			currentTime = 0.0f;
+        // repurpose the timer to display a message to the player
+        mainTimerDisplay.text = "LEVEL COMPLETE";
 
-		// update the text UI
-		mainTimerDisplay.text = currentTime.ToString ("0.00");
-	}
+        // activate the gameOverScoreOutline gameObject, if it is set 
+        if (gameOverScoreOutline)
+            gameOverScoreOutline.SetActive(true);
 
-	// public function that can be called to restart the game
-	public void RestartGame ()
-	{
-		// we are just loading a scene (or reloading this scene)
-		// which is an easy way to restart the level
+        // activate the nextLevelButtons gameObject, if it is set 
+        if (nextLevelButtons)
+            nextLevelButtons.SetActive(true);
+
+        // reduce the pitch of the background music, if it is set 
+        if (musicAudioSource)
+            musicAudioSource.pitch = 0.5f; // slow down the music
+    }
+
+    // public function that can be called to update the score or time
+    public void targetHit(int scoreAmount, float timeAmount)
+    {
+        // increase the score by the scoreAmount and update the text UI
+        score += scoreAmount;
+        mainScoreDisplay.text = score.ToString();
+
+        // increase the time by the timeAmount
+        currentTime += timeAmount;
+
+        // don't let it go negative
+        if (currentTime < 0)
+            currentTime = 0.0f;
+
+        // update the text UI
+        mainTimerDisplay.text = currentTime.ToString("0.00");
+    }
+
+    // public function that can be called to restart the game
+    public void RestartGame()
+    {
+        // we are just loading a scene (or reloading this scene)
+        // which is an easy way to restart the level
         SceneManager.LoadScene(playAgainLevelToLoad);
-	}
+    }
 
-	// public function that can be called to go to the next level of the game
-	public void NextLevel ()
-	{
-		// we are just loading the specified next level (scene)
+    // public function that can be called to go to the next level of the game
+    public void NextLevel()
+    {
+        // we are just loading the specified next level (scene)
         SceneManager.LoadScene(nextLevelToLoad);
-	}
-	
+    }
+
 
 }

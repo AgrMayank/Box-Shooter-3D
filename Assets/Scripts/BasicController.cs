@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicController : MonoBehaviour {
+public class BasicController : MonoBehaviour
+{
 
-	// Update is called once per frame
-	void Update () {
-		Debug.Log ("Horizontal Input = " + Input.GetAxis ("Horizontal"));
-	}
+    // Update is called once per frame
+    void Update()
+    {
+        Debug.Log("Horizontal Input = " + Input.GetAxis("Horizontal"));
+    }
 }
